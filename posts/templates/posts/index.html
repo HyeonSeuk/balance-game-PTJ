@@ -8,6 +8,33 @@
 {% endblock style %}
 
 {% block content %}
-<h1>index</h1>
+
+{% if user.is_authenticated %}
+<div>
+  <h3>
+    <a href="{% url 'accounts:profile' user %}">
+      {{ user }}
+    </a>
+  </h3>
+  <div>
+    <form action="{% url 'accounts:logout' %}" method="POST">
+      {% csrf_token %}
+      <p>
+        <input type="submit" value="로그아웃" autocomplete="off">
+      </p>
+    </form>
+  </div>
+</div>
+{% else %}
+{% endif %}
+{% for post in posts %}
+<div>
+  <p>게시글 번호 -
+    {{ post.pk }}
+  </p>
+</div>
+<a href="{% url 'posts:detail' post.pk %}">[게시글 조회]</a>
+<hr>
+{% endfor %}
 
 {% endblock content %}

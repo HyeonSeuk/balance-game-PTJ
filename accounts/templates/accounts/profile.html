@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div>
+    <h1>
+      {{ person.username }}님의 프로필
+    </h1>
+
+    <hr>
+
+    <div>
+      <h4>팔로잉 수: {{ person.followings.all|length }} / 팔로워 수: {{ person.followers.all|length }}</h4>
+    </div>
+
+      <div>
+        <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+          {% csrf_token %}
+          {% if request.user in person.followers.all %}
+            <input type="submit" value="UnFollow">
+          {% else %}
+            {% if request.user.is_authenticated %}
+            <input type="submit" value="Follow">
+            {% else %}
+            <input type="submit" value="Follow" disabled>
+            {% endif %}
+          {% endif %}
+        </form>
+      </div>
+
+      <div>
+        <hr>
+        <h3>팔로잉 목록</h3>
+        {% for following in person.followings.all %}
+          {{ following }}
+      {% endfor %}
+      </div>
+      <div>
+        <hr>
+        <h3>팔로워 목록</h3>
+        {% for follower in person.followers.all %}
+          {{ follower }}
+        {% endfor %}
+      </div>
+
+      <a href="{% url 'posts:index' %}">[back]</a>
+    </div>
+
+    {% endblock content %}

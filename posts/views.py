@@ -94,3 +94,6 @@ def comment_delete(request, post_pk, comment_pk):
     if request.user == comment.user:
         comment.delete()
     return redirect('posts:detail', post_pk)
+
+#def answer(request, post_pk,comment_pk):
+#    answer = 

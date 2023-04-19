@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block style %}
+  <style>
+
+  </style>
+{% endblock style %}
+
+{% block content %}
+<div class="mt-5">
+  <form action="{% url 'reviews:create' %}" method="POST" enctype="multipart/form-data" style="width: 500px" class="mx-auto m-5 mb-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="text-center">
+      <input class="btn btn-outline-secondary text-center" type="submit">
+      <a class="btn btn-outline-secondary text-center" onclick='func()' href="{% url 'posts:index' %}" role="button">HOME</a>
+    </div>
+  </form>
+
+</div>
+
+
+{% endblock content %}

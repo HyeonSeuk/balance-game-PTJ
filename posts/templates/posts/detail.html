@@ -3,14 +3,16 @@
 
 {% block style %}
 <style>
+
 </style>
 {% endblock style %}
 
 {% block content %}
-
-<h1 class="mt-1">Detail</h1>
+<main class = "container">
+  <h1 class="mt-1">밸런스 게임</h1>
 
 <a class="btn btn-outline-secondary" href="{% url 'posts:index' %}" role="button">HOME</a>
+
 
 <p>게시글 작성자 -
     <a href="{% url 'accounts:profile' post.user.username %}">
@@ -23,38 +25,67 @@
   <form method="POST">
     {% csrf_token %}
 
-    <div class='container'>
+    <div class=''>
       <h2 class='text-align-center'>
         {{ post.option1 }} vs {{ post.option2 }}
       </h2>
-      <div class='d-flex justfy-content-center gap-3 px-auto'>
+      <div class='d-flex'>
         <div class="card" style="width: 18rem;">
-          <img src="{{ post.image1.url }}" class="card-img-top" alt="...">
-          <div class="card-body">
-            <button type="submit" name="answer" value="{{ post.option1 }}" {% if post.selected_option == post.option1 %}disabled{% endif %}>
+          <img src="{{ post.image1.url }}" class="card-img-top" alt="" width="100" height="300">
+          <div class="card-body mx-auto">
+            <button type="submit" class="btn btn-outline-primary" name="answer" value="{{ post.option1 }}" {% if post.selected_option == post.option1 %}disabled{% endif %}>
               {{ post.option1 }} ({{ post.option1_count }})
             </button>
           </div>
         </div>
     
         <div class="card" style="width: 18rem;">
-          <img src="{{ post.image2.url }}" class="card-img-top" alt="...">
-          <div class="card-body">
-            <button type="submit" name="answer" value="{{ post.option2 }}" {% if post.selected_option == post.option2 %}disabled{% endif %}>
+          <img src="{{ post.image2.url }}" class="card-img-top" alt="" width="100" height="300"> 
+          <div class="card-body mx-auto">
+            <button type="submit" class="btn btn-outline-primary" name="answer" value="{{ post.option2 }}" {% if post.selected_option == post.option2 %}disabled{% endif %}>
               {{ post.option2 }} ({{ post.option2_count }})
             </button>
           </div>
         </div>
       </div>
     </div>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      공유하기
+    </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">공유하기</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class ="mx-auto">
+              <a class='btn btn-outline-primary' href="https://www.facebook.com">페이스북</a>
+              <a class='btn btn-outline-danger' href="https://www.instagram.com">인스타그램</a>
+              <a class='btn btn-outline-secondary' href="https://twitter.com/">트위터</a>
+              
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   </form>
 
-</div>
+  
+
+
+
 <hr>
 <form action="{% url 'posts:comment_create' post.pk %}" method="post">
   {% csrf_token %}
   {{ comment_form.as_p }}
-  <input type="submit" value="댓글 작성">
+  <input type="submit" class="btn btn-outline-warning" value="댓글 작성">
 </form>
 <hr>
 
@@ -72,12 +103,13 @@
     {% if comment.user == user %}
       <form action="{% url 'posts:comment_delete' post.pk comment.pk %}" method="POST">
         {% csrf_token %}
-        <input type="submit" value="댓글 삭제">
+        <input type="submit" class="btn btn-outline-danger" value="댓글 삭제">
       </form>
     {% endif %}
   </div>
   <hr>
 {% endfor %}
+</main>
 
 
 <script>

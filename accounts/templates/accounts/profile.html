@@ -1,47 +1,211 @@
 {% extends 'base.html' %}
+{% load static %}
+
+
+{% block style %}
+a {
+  cursor: pointer;
+}
+
+tbody tr {
+  transition: all 0.2s linear;
+}
+
+tbody tr:hover {
+  transform: scale(1.005);
+  box-shadow: 1px 1px 15px lightgray;
+}
+
+.padding {
+  padding-top: 3rem;
+}
+
+.profile-img {
+  width: 100px;
+  height: 100%;
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.profile-img-small {
+  width: 30px;
+  height: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.profile-form {
+  max-width: 350px;
+}
+
+.no-width {
+  width: 10%;
+  vertical-align: middle;
+}
+
+.date-width {
+  width: 10%;
+  vertical-align: middle;
+}
+
+.option-img {
+  height: 100%;
+  width: 100%;
+  line-height: 30px;
+  object-fit: cover;
+}
+
+.img-form {
+  width: 180px;
+  height: 250px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 0.1px solid lightgray;
+}
+
+.empty-img {
+  width: 150px;
+  opacity: 0.5;
+}
+
+.font-gray {
+  color: gray;
+  text-align: center;
+}
+{% endblock style %}
+
+
 {% block content %}
-  <div>
-    <h1>
-      {{ person.username }}님의 프로필
-    </h1>
+  <div class='container padding'>
+    {% comment %} 유저 프로필 {% endcomment %}
+    <div class='d-flex justify-content-center gap-4 mb-5'>
+      <img src="{% static 'img/no-profile.png' %}" alt="img" class='profile-img'>
+      <div class='d-flex row profile-form'>
+        <h4 class='mt-2'>
+          <b>{{ person.username }}</b>님의 프로필
+        </h4>
 
-    <hr>
+        {% comment %} 팔로우 및 언팔로우 버튼 {% endcomment %}
+        <div class='d-flex align-items-center gap-3'>
+            <div>
+              <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+                {% csrf_token %}
+                {% if request.user in person.followers.all %}
+                  <input type="submit" value="UnFollow" class='btn btn-primary'>
+                {% else %}
+                  {% if request.user.is_authenticated %}
+                  <input type="submit" value="Follow" class='btn btn-primary'>
+                  {% else %}
+                  <input type="submit" value="Follow" disabled class='btn btn-primary'>
+                  {% endif %}
+                {% endif %}
+              </form>
+            </div>
 
-    <div>
-      <h4>팔로잉 수: {{ person.followings.all|length }} / 팔로워 수: {{ person.followers.all|length }}</h4>
+            {% comment %} 팔로워 수 및 팔로잉 수 modal 트리거 {% endcomment %}
+            <p class='my-auto'><a data-bs-toggle="modal" data-bs-target="#followers">팔로워 <b>{{ person.followers.all|length }}</b></a> / <a data-bs-toggle="modal" data-bs-target="#followings">팔로잉 <b>{{ person.followings.all|length }}</b></a></p>
+        </div>
+      </div>
     </div>
 
-      <div>
-        <form action="{% url 'accounts:follow' person.pk %}" method="POST">
-          {% csrf_token %}
-          {% if request.user in person.followers.all %}
-            <input type="submit" value="UnFollow">
-          {% else %}
-            {% if request.user.is_authenticated %}
-            <input type="submit" value="Follow">
-            {% else %}
-            <input type="submit" value="Follow" disabled>
-            {% endif %}
-          {% endif %}
-        </form>
-      </div>
 
-      <div>
-        <hr>
-        <h3>팔로잉 목록</h3>
-        {% for following in person.followings.all %}
-          {{ following }}
-      {% endfor %}
-      </div>
-      <div>
-        <hr>
-        <h3>팔로워 목록</h3>
-        {% for follower in person.followers.all %}
-          {{ follower }}
-        {% endfor %}
-      </div>
+    {% comment %} 해당 유저가 작성한 게시물 목록 {% endcomment %}
+    {% if person.post_set.all %}
+    <p><b>작성 게시물({{ person.post_set.all|length }})</b></p>
+      <table class="table text-center mt-0 mb-5">
+        <thead class="table-secondary">
+          <tr>
+            <th scope="col">No.</th>
+            <th scope="col">제 목</th>
+            <th scope="col">작성일</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in person.post_set.all|dictsortreversed:'created_at' %}
 
-      <a href="{% url 'posts:index' %}">[back]</a>
+          <tr>
+            {% comment %} 게시물 번호 {% endcomment %}
+            <td scope="row" class='no-width'>
+              {{ post.pk }}
+            </td>
+
+            {% comment %} 게시물 제목 {% endcomment %}
+            <td>
+              <a href="{% url 'posts:detail' post.pk %}" class='d-flex row'>
+                <div class='d-flex justify-content-center gap-3'>
+                  <div>
+                    <div class='img-form mb-2'>
+                      <img src="{{ post.image1.url }}" alt="" class='option-img'>
+                    </div>
+                    {{post.option1}}
+                  </div>
+                  <p class='my-auto'>VS</p>
+                  <div>
+                    <div class='img-form mb-2'>
+                      <img src="{{ post.image2.url }}" alt="" class='option-img'>
+                    </div>
+                    {{post.option2}}
+                  </div>
+                </div>
+              </a>
+            </td>
+
+            {% comment %} 게시물 작성일 {% endcomment %}
+            <td class="text-secondary date-width">
+              {{ post.created_at|date:"Y-m-d" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    {% else %}
+      {% comment %} 빈 작성 게시물 {% endcomment %}
+      <hr>
+      <div class='d-flex row justify-content-center mt-5'>
+        <img src="{% static 'img/empty.png' %}" alt="" class='empty-img mt-5'>
+        <h4 class='mt-5 font-gray'>생성된 밸런스 게임이 없습니다.</h4>
+      </div>
+    {% endif %}
+
+
+    <!-- 팔로잉 Modal -->
+    <div class="modal fade" id="followings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">팔로잉</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for following in person.followings.all %}
+              <a href="{% url 'accounts:profile' following.username %}"class='d-flex gap-3 mb-3'>
+                <img src="{% static 'img/no-profile.png' %}" alt="img" class='profile-img-small'>
+                {{ following }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- 팔로워 Modal -->
+    <div class="modal fade" id="followers" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">팔로워</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for follower in person.followers.all %}
+              <a href="{% url 'accounts:profile' follower.username %}" class='d-flex gap-3 mb-3'>
+                <img src="{% static 'img/no-profile.png' %}" alt="img" class='profile-img-small'>
+                {{ follower }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
     {% endblock content %}

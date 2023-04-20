@@ -1,13 +1,26 @@
 {% extends 'base.html' %}
 
+{% block style %}
+  <style>
+    .wid {
+      width: 500px;
+    }
+
+    p {
+      display: grid;
+      grid-template-columns: 1fr auto;
+    }
+
+    p span {
+      grid-column: 1 / -1;
+    }
+  </style>
+{% endblock style %}
+
 {% block content %}
-  <h2>Create a new balance game</h2>
-  <form method="POST" enctype="multipart/form-data">
+<div class="wid">
+  <form method="POST" enctype="multipart/form-data" style="width: 500px" class="mx-auto m-5 mb-3">
     {% csrf_token %}
-    {% comment %} <div class="form-group">
-      <label for="title">Game title:</label>
-      <input type="text" name="title" required class="form-control">
-    </div> {% endcomment %}
     <div class="form-group">
       <label for="option1">Option 1:</label>
       <input type="text" name="option1" required class="form-control">
@@ -24,6 +37,7 @@
       <label for="image2">Option 2 - image:</label>
       <input type="file" name="image2" required class="form-control">
     </div>
-    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="submit" class="btn btn-outline-secondary d-block w-100 mt-4">게임 생성</button>
   </form>
+</div>
 {% endblock %}

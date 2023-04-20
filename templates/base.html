@@ -18,10 +18,10 @@
   <body>
     <nav class="navbar bg-body-secondary">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'posts:index' %}">balance</a>
+        <a class="navbar-brand" href="{% url 'posts:index' %}">BELLRUNS</a>
         <div class="d-flex">
           {% if request.user.is_authenticated %}
-            <p class="m-0 me-2 align-self-center no_wrap text-secondary"><a href="#"></a></p>
+            <p class="m-0 me-2 align-self-center no_wrap text-secondary"><a href="{% url 'accounts:profile' user %}">{{ user }}님 안녕하세요!</p>
             <form action="{% url 'accounts:logout' %}" method="POST">
               {% csrf_token %}
               <input class="btn btn-outline-secondary me-2" type="submit" value="Logout">

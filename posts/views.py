@@ -19,7 +19,7 @@ def detail(request, post_pk):
     comment_form = CommentForm()
     comments = post.comment_set.all()
     if request.method == 'POST':
-        answer = request.POST['answer']
+        answer = request.POST.get('answer','')
         if answer == post.option1 and request.user not in post.select1_contents.all():
             post.option1_count += 1
             post.selected_option = post.option1

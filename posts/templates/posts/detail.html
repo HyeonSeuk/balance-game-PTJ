@@ -19,15 +19,19 @@
     게시글 번호 -
     {{post.pk}}
   </p>
-  <p>
-    게시글 제목 -
+  <h2>
     {{post.title}}
-  </p>
-  <p>
-    게시글 내용 -
-    {{post.content}}
-  </p>
-  <a href="{% url 'posts:index' %}">[back]</a>
+  </h2>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" name="answer" value="{{ post.option1 }}" {% if post.selected_option == post.option1 %}disabled{% endif %}>
+      {{ post.option1 }} ({{ post.option1_count }})
+    </button>
+    <button type="submit" name="answer" value="{{ post.option2 }}" {% if post.selected_option == post.option2 %}disabled{% endif %}>
+      {{ post.option2 }} ({{ post.option2_count }})
+    </button>
+  </form>
+
 </div>
 <hr>
 <form action="{% url 'posts:comment_create' post.pk %}" method="post">
@@ -58,4 +62,24 @@
   <hr>
 {% endfor %}
 
+
+<script>
+    // 이전에 선택한 버튼이 있는 경우, 해당 버튼의 value 값을 가져옵니다.
+    var selectedValue = "{{ post.selected_option }}";
+    var buttons = document.querySelectorAll('button[name="answer"]');
+  
+    // 모든 버튼을 돌면서
+    buttons.forEach(function(button) {
+      // 선택한 버튼이 이미 선택된 버튼이면
+      if (selectedValue == button.value) {
+        // 모든 버튼을 disable 처리합니다.
+        buttons.forEach(function(disableButton) {
+          disableButton.disabled = true;
+        });
+  
+        // 선택된 버튼만 enable 처리합니다.
+        button.disabled = false;
+      }
+    });
+</script>
 {% endblock content %}

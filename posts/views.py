@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
@@ -13,33 +13,42 @@ def index(request):
     return render(request, 'posts/index.html', context)
 
 
-def detail(request, pk):
-    post = Post.objects.get(pk=pk)
+@login_required
+def detail(request, post_pk):
+    post = get_object_or_404(Post, pk=post_pk)
     comment_form = CommentForm()
     comments = post.comment_set.all()
-    context = {
-        'post': post,
-        'comment_form': comment_form,
-        'comments': comments,
-    }
+    if request.method == 'POST':
+        answer = request.POST['answer']
+        if answer == post.option1 and request.user not in post.select1_contents.all():
+            post.option1_count += 1
+            post.selected_option = post.option1
+            post.select1_contents.add(request.user)
+            post.select2_contents.remove(request.user)
+        elif answer == post.option2 and request.user not in post.select2_contents.all():
+            post.option2_count += 1
+            post.selected_option = post.option2
+            post.select2_contents.add(request.user)
+            post.select1_contents.remove(request.user)
+        post.save()
+
+    context = {'post': post,
+               'comment_form':comment_form,
+               'comments': comments,
+               }
     return render(request, 'posts/detail.html', context)
 
 
 @login_required
 def create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user
-            post.save()
-            return redirect('posts:detail', post.pk)
-    else:
-        form = PostForm()
-    context = {
-        'form': form,
-    }
-    return render(request, 'posts/create.html', context)
+        title = request.POST['title']
+        option1 = request.POST['option1']
+        option2 = request.POST['option2']
+        user = request.user
+        post = Post.objects.create(title=title, option1=option1, option2=option2, user=user)
+        return redirect('posts:detail', post_pk=post.pk)
+    return render(request, 'posts/create.html')
 
 
 @login_required
@@ -95,5 +104,13 @@ def comment_delete(request, post_pk, comment_pk):
         comment.delete()
     return redirect('posts:detail', post_pk)
 
-#def answer(request, post_pk,comment_pk):
-#    answer = 
+
+def answer(request, post_pk, answer):
+    post = get_object_or_404(Post, pk=post_pk)
+    if answer == '1':
+        post.select1_contents.add(request.user)
+    elif answer == '2':
+        post.select2_contents.add(request.user)
+    else:
+        pass
+    return redirect('posts:detail', pk=post_pk)

@@ -14,22 +14,39 @@
 
 <p>게시글 작성자 -
     <a href="{% url 'accounts:profile' post.user.username %}">
-    {{post.user}}</a></p>
+    {{ post.user }}</a></p>
   <p>
     게시글 번호 -
-    {{post.pk}}
+    {{ post.pk }}
   </p>
-  <h2>
-    {{post.title}}
-  </h2>
+  
   <form method="POST">
     {% csrf_token %}
-    <button type="submit" name="answer" value="{{ post.option1 }}" {% if post.selected_option == post.option1 %}disabled{% endif %}>
-      {{ post.option1 }} ({{ post.option1_count }})
-    </button>
-    <button type="submit" name="answer" value="{{ post.option2 }}" {% if post.selected_option == post.option2 %}disabled{% endif %}>
-      {{ post.option2 }} ({{ post.option2_count }})
-    </button>
+
+    <div class='container'>
+      <h2 class='text-align-center'>
+        {{ post.option1 }} vs {{ post.option2 }}
+      </h2>
+      <div class='d-flex justfy-content-center gap-3 px-auto'>
+        <div class="card" style="width: 18rem;">
+          <img src="{{ post.image1.url }}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <button type="submit" name="answer" value="{{ post.option1 }}" {% if post.selected_option == post.option1 %}disabled{% endif %}>
+              {{ post.option1 }} ({{ post.option1_count }})
+            </button>
+          </div>
+        </div>
+    
+        <div class="card" style="width: 18rem;">
+          <img src="{{ post.image2.url }}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <button type="submit" name="answer" value="{{ post.option2 }}" {% if post.selected_option == post.option2 %}disabled{% endif %}>
+              {{ post.option2 }} ({{ post.option2_count }})
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
 
 </div>

@@ -6,7 +6,7 @@ from .forms import PostForm, CommentForm
 
 # Create your views here.
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-created_at')
     context = {
         'posts': posts,
     }
@@ -32,21 +32,23 @@ def detail(request, post_pk):
             post.select1_contents.remove(request.user)
         post.save()
 
-    context = {'post': post,
-               'comment_form':comment_form,
-               'comments': comments,
-               }
+    context = {
+        'post': post,
+        'comment_form':comment_form,
+        'comments': comments,
+        }
     return render(request, 'posts/detail.html', context)
 
 
 @login_required
 def create(request):
     if request.method == 'POST':
-        title = request.POST['title']
         option1 = request.POST['option1']
         option2 = request.POST['option2']
+        image1 = request.FILES.get('image1')
+        image2 = request.FILES.get('image2')
         user = request.user
-        post = Post.objects.create(title=title, option1=option1, option2=option2, user=user)
+        post = Post.objects.create(option1=option1, option2=option2, image1=image1, image2=image2, user=user)
         return redirect('posts:detail', post_pk=post.pk)
     return render(request, 'posts/create.html')
 
@@ -105,6 +107,7 @@ def comment_delete(request, post_pk, comment_pk):
     return redirect('posts:detail', post_pk)
 
 
+@login_required
 def answer(request, post_pk, answer):
     post = get_object_or_404(Post, pk=post_pk)
     if answer == '1':
@@ -114,3 +117,13 @@ def answer(request, post_pk, answer):
     else:
         pass
     return redirect('posts:detail', pk=post_pk)
+
+
+@login_required
+def likes(request, post_pk):
+    post = Post.objects.get(pk=post_pk)
+    if request.user in post.like_users.all():
+        post.like_users.remove(request.user)
+    else:
+        post.like_users.add(request.user)
+    return redirect('posts:index')

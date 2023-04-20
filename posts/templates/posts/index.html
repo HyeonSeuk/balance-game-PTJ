@@ -29,11 +29,21 @@
 {% endif %}
 {% for post in posts %}
 <div>
-  <p>게시글 번호 -
-    {{ post.pk }}
-  </p>
+  <a href="{% url 'posts:detail' post.pk %}">
+    <p>
+      {{post.option1}} vs {{post.option2}}
+    </p>
+  </a>
 </div>
-<a href="{% url 'posts:detail' post.pk %}">[주제 보기]</a>
+<form action="{% url 'posts:likes' post.pk %}" method="POST">
+  {% csrf_token %}
+  {% if request.user in post.like_users.all %}
+    <input type="submit" value="좋아요 취소">
+  {% else %}
+    <input type="submit" value="좋아요">
+  {% endif %}
+</form>
+
 <hr>
 {% endfor %}
 

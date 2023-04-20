@@ -2,19 +2,27 @@
 
 {% block content %}
   <h2>Create a new balance game</h2>
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="form-group">
+    {% comment %} <div class="form-group">
       <label for="title">Game title:</label>
       <input type="text" name="title" required class="form-control">
-    </div>
+    </div> {% endcomment %}
     <div class="form-group">
       <label for="option1">Option 1:</label>
       <input type="text" name="option1" required class="form-control">
     </div>
     <div class="form-group">
+      <label for="image1">Option 1 - image:</label>
+      <input type="file" name="image1" required class="form-control">
+    </div>
+    <div class="form-group">
       <label for="option2">Option 2:</label>
       <input type="text" name="option2" required class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="image2">Option 2 - image:</label>
+      <input type="file" name="image2" required class="form-control">
     </div>
     <button type="submit" class="btn btn-primary">Create</button>
   </form>

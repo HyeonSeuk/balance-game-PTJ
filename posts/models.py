@@ -5,7 +5,6 @@ from django.conf import settings
 # Create your models here.
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=10)
     content = models.TextField()
     option1 = models.CharField(max_length=200)
     option2 = models.CharField(max_length=200)
@@ -16,6 +15,9 @@ class Post(models.Model):
     select2_contents = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='selected_option2_posts', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')
+    image1 = models.ImageField(blank=True)
+    image2 = models.ImageField(blank=True)
 
 
 class Comment(models.Model):

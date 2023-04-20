@@ -3,47 +3,60 @@
 
 {% block style %}
 <style>
+  .c{
+    height: 400px;
+    object-fit: cover;
+  }
 
+  .card-img-top {
+    height: 400px;
+    object-fit: cover;
+  }
 </style>
 {% endblock style %}
 
 {% block content %}
 
-{% if user.is_authenticated %}
-<div>
-  <h3>
-    <a href="{% url 'accounts:profile' user %}">
-      {{ user }}
-    </a>
-  </h3>
-  <div>
-    <form action="{% url 'accounts:logout' %}" method="POST">
-      {% csrf_token %}
-      <p>
-        <input type="submit" value="로그아웃" autocomplete="off">
-      </p>
-    </form>
+{% for post in posts %}
+<div class="container mt-5">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-6 col-md-6 col-lg-3">
+      <div class="card" style="width: 18rem;">
+        <div class="c">
+          <img class="card-img-top" src="{{ post.image1.url }}" alt="Image 1">
+        </div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ post.option1 }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-6 col-lg-3 d-flex align-items-center justify-content-center">
+      <h1>VS</h1>
+    </div>
+    <div class="col-6 col-md-6 col-lg-3">
+      <div class="card" style="width: 18rem;">
+        <div class="c">
+          <img class="card-img-top" src="{{ post.image2.url }}" alt="Image 2">
+        </div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ post.option2 }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 text-center mt-3">
+      <form action="{% url 'posts:likes' post.pk %}" method="POST">
+        {% csrf_token %}
+        {% if request.user in post.like_users.all %}
+          <a class="btn btn-outline-secondary" href="{% url 'posts:detail' post.pk %}" role="button">주제 보기</a>
+          <button type="submit" class="btn btn-outline-secondary">좋아요 취소</button>
+        {% else %}
+          <a class="btn btn-outline-secondary" href="{% url 'posts:detail' post.pk %}" role="button">주제 보기</a>
+          <button type="submit" class="btn btn-outline-secondary">좋아요</button>
+        {% endif %}
+      </form>
+    </div>
   </div>
 </div>
-{% else %}
-{% endif %}
-{% for post in posts %}
-<div>
-  <a href="{% url 'posts:detail' post.pk %}">
-    <p>
-      {{post.option1}} vs {{post.option2}}
-    </p>
-  </a>
-</div>
-<form action="{% url 'posts:likes' post.pk %}" method="POST">
-  {% csrf_token %}
-  {% if request.user in post.like_users.all %}
-    <input type="submit" value="좋아요 취소">
-  {% else %}
-    <input type="submit" value="좋아요">
-  {% endif %}
-</form>
-
 <hr>
 {% endfor %}
 

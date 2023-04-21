@@ -4,68 +4,176 @@
 {% block style %}
 <style>
   .c{
-    height: 400px;
+    height: 300px;
     object-fit: cover;
   }
 
   .card-img-top {
-    height: 400px;
+    width: 300px;
+    height: 300px;
     object-fit: cover;
+  }
+
+  .game-form {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    width: 1000px;
+    margin: auto;
+  }
+
+  .like {
+    background-color: transparent;
+    transition: all 0.1s linear;
+  }
+
+  .like:hover {
+    transform: scale(1.3);
+  }
+
+  .like:active {
+    color: lightgray;
+  }
+
+  .like-red {
+    color: red;
+    background-color: transparent;
+    transition: all 0.1s linear;
+  }
+
+  .like-red:hover {
+    transform: scale(1.3);
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 48
+  }
+
+  .post-user {
+    color: gray;
+    font-size: 14px;
+  }
+  
+  .post-user:hover {
+    color: black;
+  }
+
+  .width {
+    width: 100px;
   }
 </style>
 {% endblock style %}
 
 {% block content %}
-
-{% for post in posts %}
 <div class="container mt-5">
-  <div class="row justify-content-center align-items-center">
-    <div class="col-6 col-md-6 col-lg-3">
-      <div class="card" style="width: 18rem;">
-        <div class="c">
-          {% if post.image1 %}
-            <img class="card-img-top" src="{{ post.image1.url }}" alt="Image 1">
-          {% else %}
-            <img class="card-img-top" src="{% static 'img/no-img.jpg' %}" alt="image1">
-          {% endif %}
-        </div>
-        <div class="card-body text-center">
-          <h5 class="card-title">{{ post.option1 }}</h5>
-        </div>
+  <div class='d-flex row gap-3 justify-content-center'>
+    {% for post in posts %}
+      <div class="d-flex row p-4 game-form">
+        <a href="{% url 'posts:detail' post.pk %}">
+          <div class='d-flex justify-content-center gap-3'>
+            <div class="card border-0">
+              <div class="c">
+                {% if post.image1 %}
+                  <img class="card-img-top" src="{{ post.image1.url }}" alt="Image 1">
+                {% else %}
+                  <img class="card-img-top" src="{% static 'img/no-img.jpg' %}" alt="image1">
+                {% endif %}
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title"><b>{{ post.option1 }}</b></h5>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-center justify-content-center">
+              <h1>VS</h1>
+            </div>
+            <div class="card border-0">
+              <div class="c">
+                {% if post.image2 %}
+                  <img class="card-img-top" src="{{ post.image2.url }}" alt="Image 2">
+                {% else %}
+                  <img class="card-img-top" src="{% static 'img/no-img.jpg' %}" alt="image2">
+                {% endif %}
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title"><b>{{ post.option2 }}</b></h5>
+              </div>
+            </div>
+          </div>
+          <div class='d-flex justify-content-between'>
+            <p class='my-auto flex-grow-1'>
+              제작 : 
+              <a href="{% url 'accounts:profile' post.user.username %}" class='post-user'>{{ post.user }}</a>
+            </p>
+            <form action="{% url 'posts:likes' post.pk %}" method="POST">
+              {% csrf_token %}
+              {% if request.user in post.like_users.all %}
+                <button type="submit" class="border-0 like-red">
+                  <span class="material-symbols-outlined">
+                    favorite
+                  </span>
+                </button>
+              {% else %}
+                <button type="submit" class="border-0 like">
+                  <span class="material-symbols-outlined">
+                    favorite
+                  </span>
+                </button>
+              {% endif %}
+            </form>
+          </div>
+        </a>
       </div>
-    </div>
-    <div class="col-6 col-md-6 col-lg-3 d-flex align-items-center justify-content-center">
-      <h1>VS</h1>
-    </div>
-    <div class="col-6 col-md-6 col-lg-3">
-      <div class="card" style="width: 18rem;">
-        <div class="c">
-          {% if post.image2 %}
-            <img class="card-img-top" src="{{ post.image2.url }}" alt="Image 2">
-          {% else %}
-            <img class="card-img-top" src="{% static 'img/no-img.jpg' %}" alt="image2">
-          {% endif %}
-        </div>
-        <div class="card-body text-center">
-          <h5 class="card-title">{{ post.option2 }}</h5>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 text-center mt-3">
-      <form action="{% url 'posts:likes' post.pk %}" method="POST">
-        {% csrf_token %}
-        {% if request.user in post.like_users.all %}
-          <a class="btn btn-outline-secondary" href="{% url 'posts:detail' post.pk %}" role="button">주제 보기</a>
-          <button type="submit" class="btn btn-outline-secondary">좋아요 취소</button>
-        {% else %}
-          <a class="btn btn-outline-secondary" href="{% url 'posts:detail' post.pk %}" role="button">주제 보기</a>
-          <button type="submit" class="btn btn-outline-secondary">좋아요</button>
-        {% endif %}
-      </form>
-    </div>
+    {% endfor %}
   </div>
-  <hr>
-</div>
-{% endfor %}
 
+  {% comment %} 페이지네이션 작성 {% endcomment %}
+  <ul class='pagination justify-content-center my-5'>
+    {% if posts.has_previous %}
+
+      {% comment %} 처음으로 버튼 (페이지를 1로 설정) {% endcomment %}
+      <li class='page-item'>
+        <a class='page-link' href="?page=1">처음</a>
+      </li>
+
+      <li class='page-item'>
+        <a class='page-link' href="?page={{ posts.previous_page_number }}">이전</a>
+      </li>
+    {% else %}
+      <li class='page-item disabled'>
+        <a class='page-link' tabindex='-1' aria-disabled='true' href="#">이전</a>
+      </li>
+    {% endif %}
+    {% for page_number in posts.paginator.page_range %}
+      {% if page_number >= posts.number|add:-5 and page_number <= posts.number|add:5 %}
+        {% if page_number == posts.number %}
+          <li class='page-item active' aria-current='page'>
+            <a class='page-link' href="?page={{ page_number }}">{{ page_number }}</a>
+          </li>
+        {% else %}
+          <li class='page-item'>
+            <a class='page-link' href="?page={{ page_number }}">{{ page_number }}</a>
+          </li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if posts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.next_page_number }}">다음</a>
+      </li>
+
+      {% comment %} 마지막으로 버튼 (페이지를 전체페이지 수로 설정) {% endcomment %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.paginator.num_pages }}">마지막</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+      </li>
+    {% endif %}
+  </ul>
+</div>
 {% endblock content %}

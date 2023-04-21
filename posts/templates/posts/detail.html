@@ -60,7 +60,11 @@
         <div class="col-6 col-md-6 col-lg-3">
           <div class="card" style="width: 18rem;">
             <div class="c">
-            <img src="{{ post.image1.url }}" class="card-img-top" alt="">
+              {% if post.image1 %}
+                <img src="{{ post.image1.url }}" class="card-img-top" alt="">
+              {% else %}
+                <img src="{% static 'img/no-img.jpg' %}" class="card-img-top" alt="">
+              {% endif %}
             </div>
             <div class="card-body text-center">
               <button type="submit" class="btn btn-outline-secondary" name="answer" value="{{ post.option1 }}" {% if post.selected_option == post.option1 %}disabled{% endif %}>
@@ -72,8 +76,12 @@
         <div class="col-6 col-md-6 col-lg-3">
           <div class="card" style="width: 18rem;">
             <div class="c">
-            <img src="{{ post.image2.url }}" class="card-img-top" alt="">
-            </div> 
+              {% if post.image2 %}
+                <img src="{{ post.image2.url }}" class="card-img-top" alt="">
+              {% else %}
+                <img src="{% static 'img/no-img.jpg' %}" class="card-img-top" alt="">
+              {% endif %}
+            </div>
             <div class="card-body mx-auto">
               <button type="submit" class="btn btn-outline-secondary" name="answer" value="{{ post.option2 }}" {% if post.selected_option == post.option2 %}disabled{% endif %}>
                 {{ post.option2 }} ({{ post.option2_count }})

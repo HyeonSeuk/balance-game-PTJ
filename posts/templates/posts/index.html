@@ -23,7 +23,11 @@
     <div class="col-6 col-md-6 col-lg-3">
       <div class="card" style="width: 18rem;">
         <div class="c">
-          <img class="card-img-top" src="{{ post.image1.url }}" alt="Image 1">
+          {% if post.image1 %}
+            <img class="card-img-top" src="{{ post.image1.url }}" alt="Image 1">
+          {% else %}
+            <img class="card-img-top" src="{% static 'img/no-img.jpg' %}" alt="image1">
+          {% endif %}
         </div>
         <div class="card-body text-center">
           <h5 class="card-title">{{ post.option1 }}</h5>
@@ -36,7 +40,11 @@
     <div class="col-6 col-md-6 col-lg-3">
       <div class="card" style="width: 18rem;">
         <div class="c">
-          <img class="card-img-top" src="{{ post.image2.url }}" alt="Image 2">
+          {% if post.image2 %}
+            <img class="card-img-top" src="{{ post.image2.url }}" alt="Image 2">
+          {% else %}
+            <img class="card-img-top" src="{% static 'img/no-img.jpg' %}" alt="image2">
+          {% endif %}
         </div>
         <div class="card-body text-center">
           <h5 class="card-title">{{ post.option2 }}</h5>

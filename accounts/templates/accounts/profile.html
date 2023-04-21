@@ -135,14 +135,22 @@ tbody tr:hover {
                 <div class='d-flex justify-content-center gap-3'>
                   <div>
                     <div class='img-form mb-2'>
-                      <img src="{{ post.image1.url }}" alt="" class='option-img'>
+                      {% if post.image1 %}
+                        <img src="{{ post.image1.url }}" alt="" class='option-img'>
+                      {% else %}
+                        <img src="{% static 'img/no-img.jpg' %}" alt="" class='option-img'>
+                      {% endif %}
                     </div>
                     {{post.option1}}
                   </div>
                   <p class='my-auto'>VS</p>
                   <div>
                     <div class='img-form mb-2'>
-                      <img src="{{ post.image2.url }}" alt="" class='option-img'>
+                      {% if post.image2 %}
+                        <img src="{{ post.image2.url }}" alt="" class='option-img'>
+                      {% else %}
+                        <img src="{% static 'img/no-img.jpg' %}" alt="" class='option-img'>
+                      {% endif %}
                     </div>
                     {{post.option2}}
                   </div>

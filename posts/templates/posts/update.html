@@ -20,23 +20,16 @@
 {% block content %}
 <div class="wid">
   <form method="POST" enctype="multipart/form-data" style="width: 500px" class="mx-auto m-5 mb-3">
+    <div class='mb-4'>
+      <h3>게임 수정</h3>
+    </div>
     {% csrf_token %}
-    <div class="form-group">
-      <label for="option1">Option 1:</label>
-      <input type="text" name="option1" required class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="image1">Option 1 - image:</label>
-      <input type="file" name="image1" required class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="option2">Option 2:</label>
-      <input type="text" name="option2" required class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="image2">Option 2 - image:</label>
-      <input type="file" name="image2" required class="form-control">
-    </div>
+    {% for field in form %}
+      <div class='mb-3'>
+        <div>{{ field.label }}</div>
+        <div>{{ field }}</div>
+      </div>
+    {% endfor %}
     <button type="submit" class="btn btn-outline-secondary d-block w-100 mt-4">게임 수정</button>
   </form>
 </div>

@@ -28,7 +28,7 @@
 
 {% block content %}
 <main class = "container text-center">
-  <h1 class="mt-1">BELLRUNS GAME</h1>
+  <h1 class="my-4">BELLRUNS GAME</h1>
 
   <p>게임 제작 -
     <a href="{% url 'accounts:profile' post.user.username %}">
@@ -90,7 +90,7 @@
           </div>
         </div>
     </div>
- 
+
     <!-- 해당 코드 없애면 수정 및 생성, 삭제 오류 발생 -->
     {% if request.user == post.user %}
     <form action="{% url 'posts:delete' post.pk %}" method="POST">
@@ -103,7 +103,7 @@
       {% if request.user == post.user %}
       <form action="{% url 'posts:delete' post.pk %}" method="POST">
         {% csrf_token %}
-        <input type="submit" value="DELETE" class="btn btn-outline-secondary me-2">
+        <input type="submit" value="DELETE" class="btn btn-outline-secondary me-2" onclick="return confirm('삭제 하시겠습니까?')">
       </form>
       <a class="btn btn-outline-secondary me-2" href="{% url 'posts:update' post.pk %}" role="button">UPDATE</a>
     {% endif %}
@@ -122,7 +122,6 @@
               <a class='btn btn-outline-primary' href="https://www.facebook.com">페이스북</a>
               <a class='btn btn-outline-danger' href="https://www.instagram.com">인스타그램</a>
               <a class='btn btn-outline-info' href="https://twitter.com/">트위터</a>
-              
             </div>
           </div>
           <div class="modal-footer">

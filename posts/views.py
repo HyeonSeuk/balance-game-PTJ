@@ -2,13 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
+from django.core.paginator import Paginator
 
 
 # Create your views here.
 def index(request):
     posts = Post.objects.all().order_by('-created_at')
+    page = request.GET.get('page', '1')
+    per_page = 5
+    paginator = Paginator(posts, per_page)
+    page_obj = paginator.get_page(page)
     context = {
-        'posts': posts,
+        'posts': page_obj,
     }
     return render(request, 'posts/index.html', context)
 
@@ -66,14 +71,14 @@ def update(request, post_pk):
     post = Post.objects.get(pk=post_pk)
     if request.user == post.user:
         if request.method == 'POST':
-            form = PostForm(request.POST, instance=post)
+            form = PostForm(request.POST, request.FILES, instance=post)
             if form.is_valid():
                 form.save()
                 return redirect('posts:detail', post.pk)
         else:
             form = PostForm(instance=post)
     else:
-        return redirect('posts:index')
+        return redirect('posts:detail', post_pk)
     context = {
         'post': post,
         'form': form,
